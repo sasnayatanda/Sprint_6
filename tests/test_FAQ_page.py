@@ -2,7 +2,7 @@ import pytest
 import allure
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from locators.FAQLocators import FAQPageLocators
+from locators.base_locators import BaseLocators
 from pages.FAQ_page import FAQPAGE
 
 @allure.feature("FAQ Section")
@@ -12,7 +12,7 @@ class TestFAQ:
         self.driver = driver
         self.faq_page = FAQPAGE(driver)
         with allure.step("Открываем главную страницу"):
-            driver.get(FAQPageLocators.BASE_URL)
+            driver.get(BaseLocators.BASE_URL)
         with allure.step("Прокручиваем к разделу FAQ"):
             faq_header = self.faq_page._wait_for_element(FAQPageLocators.FAQ_HEADER)
             driver.execute_script("arguments[0].scrollIntoView();", faq_header)

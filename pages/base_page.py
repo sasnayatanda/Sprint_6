@@ -1,21 +1,32 @@
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from locators.base_locators import BaseLocators
 
 class BasePage:
-    def __init__(self, driver):
+    """Абстрактный базовый класс для всех страниц"""
+    
+    def __init__(self, driver, base_url=None):
         self.driver = driver
         self.wait = WebDriverWait(driver, 10)
+        self._base_url = base_url
 
     def open(self):
-        self.driver.get(BaseLocators.BASE_URL)
-        self.accept_cookies()
-        
-    def accept_cookies(self):
-        try:
-            cookie_button = self.wait.until(
-                EC.element_to_be_clickable(BaseLocators.COOKIE_BANNER)
-            )
-            cookie_button.click()
-        except:
-            pass
+        if not self._base_url:
+            raise NotImplementedError("Дочерний класс должен определить base_url")
+        self.driver.get(self._base_url)
+
+    def click_element(self, locator):
+        element = self.wait.until(EC.element_to_be_clickable(locator))
+        element.click()
+        return element
+
+    def find_element(self, locator):
+        return self.wait.until(EC.visibility_of_element_located(locator))
+
+    def send_keys(self, locator, text):
+        element = self.find_element(locator)
+        element.clear()
+        element.send_keys(text)
+        return element
+
+    def find_elements(self, locator):
+        return self.wait.until(EC.presence_of_all_elements_located(locator))
