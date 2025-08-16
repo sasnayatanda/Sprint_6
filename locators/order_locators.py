@@ -1,36 +1,30 @@
 from selenium.webdriver.common.by import By
 
 class OrderLocators:
-    
     # Кнопки заказа
-    ORDER_BUTTON_TOP = (By.CSS_SELECTOR, ".Button_Button__ra12g")  # Первая кнопка "Заказать"
-    ORDER_BUTTON_BOTTOM = (By.XPATH, "(//button[contains(text(), 'Заказать')])[2]")  # Вторая кнопка
+    ORDER_BUTTON_TOP = (By.XPATH, "//button[text()='Заказать' and @class='Button_Button__ra12g']")
+    ORDER_BUTTON_BOTTOM = (By.XPATH, "//button[text()='Заказать' and @class='Button_Button__ra12g Button_Middle__1CSJM']")
     
-    # Первая форма
+    # Первая страница заказа
     NAME = (By.XPATH, "//input[@placeholder='* Имя']")
     LAST_NAME = (By.XPATH, "//input[@placeholder='* Фамилия']")
     ADDRESS = (By.XPATH, "//input[@placeholder='* Адрес: куда привезти заказ']")
-    METRO_STATION = (By.CLASS_NAME, "select-search__input")
-    METRO_OPTION = (By.CSS_SELECTOR, ".select-search__option")  # Все станции
+    METRO_STATION = (By.XPATH, "//input[@placeholder='* Станция метро']")
+    METRO_OPTION = (By.XPATH, "//div[contains(@class, 'select-search__option')]")
     PHONE = (By.XPATH, "//input[@placeholder='* Телефон: на него позвонит курьер']")
     NEXT_BUTTON = (By.XPATH, "//button[text()='Далее']")
     
-    # Вторая форма
+    # Вторая страница заказа
     DATE = (By.XPATH, "//input[@placeholder='* Когда привезти самокат']")
-    RENT_PERIOD = (By.CLASS_NAME, "Dropdown-placeholder")
-    RENT_OPTIONS = (By.CLASS_NAME, "Dropdown-option")  # Все варианты аренды
+    RENT_PERIOD = (By.XPATH, "//div[text()='* Срок аренды']")
+    RENT_OPTIONS = (By.XPATH, "//div[@class='Dropdown-option']")
     BLACK_CHECKBOX = (By.ID, "black")
     GREY_CHECKBOX = (By.ID, "grey")
     COMMENT = (By.XPATH, "//input[@placeholder='Комментарий для курьера']")
-    ORDER_BUTTON = (By.XPATH, "(//button[text()='Заказать'])[2]")
+    ORDER_BUTTON = (By.XPATH, "//button[@class='Button_Button__ra12g Button_Middle__1CSJM' and text()='Заказать']")
     CONFIRM_BUTTON = (By.XPATH, "//button[text()='Да']")
+    SUCCESS_MESSAGE = (By.XPATH, "//div[contains(@class, 'Order_ModalHeader')]")
     
-    # Подтверждение
-    SUCCESS_MESSAGE = (By.CLASS_NAME, "Order_ModalHeader__3FDaJ")
-    
-    # локатор календаря
-    DATE_INPUT = (By.CLASS_NAME, "react-datepicker")  
-    
-    #Логотипы
-    SCOOTER_LOGO = (By.CLASS_NAME, "Header_LogoScooter__3lsAR")
-    YANDEX_LOGO = (By.CLASS_NAME, "Header_LogoYandex__3TSOI")
+    # Логотипы
+    SCOOTER_LOGO = (By.XPATH, "//a[@class='Header_LogoScooter__3lsAR']")
+    YANDEX_LOGO = (By.XPATH, "//a[@class='Header_LogoYandex__3TSOI']")

@@ -1,51 +1,53 @@
 import pytest
-from pages.order_page import OrderPage
-import time
 import allure
-from pages.base_page import BasePage
+from data.order_data import OrderTestData
+from pages.order_page import OrderPage
 
-@allure.feature("Order Section")
-class TestOrder:   
-    @allure.title("Проверка заказа самоката")
-    def test_order_scooter(self, driver, top_button, period_index, color):
-        order_page = OrderPage(driver)
-        order_page.open()  # Здесь уже есть неявное ожидание в базовых методах
-    
-        # 1. Начало заказа (внутри уже есть ожидания)
-        order_page.click_order_button(top=top_button)
-
-        # 2. Заполнение первой страницы
-        order_page.fill_first_page(
-            name="Иван",
-            last_name="Иванов",
-            address="ул. Пушкина, 10",
-            metro_station="Сокольники",
-            phone="89991112233"
-        )
-    
-        # 3. Заполнение второй страницы
-        result = order_page.fill_second_page(
-            date="12.12.2023",
-            period_index=period_index,
-            color=color,
-            comment="Тестовый заказ"
-        )
-    
-    # 4. Проверка результата
-    assert "Заказ оформлен" in result
-    
-    @allure.title("Проверка клик по логотипу самоката")    
-    def test_scooter_logo(self, driver):
-        order_page = OrderPage(driver)
-        order_page.open()
+@allure.feature("Оформление заказа самоката")
+class TestOrderScooter:
+    @allure.title("Полный процесс заказа (кнопка: {top_button}, цвет: {color})")
+    @pytest.mark.parametrize("top_button, color", [
+        (True, "black"),
+        (False, "grey")
+    ])
+    def test_complete_order_flow(self, browser, top_button, color):
+        order_page = OrderPage(browser)
         
-        result = order_page.check_scooter_logo()
-        assert result, "Логотип Самоката не ведет на главную страницу"
-    
-    @allure.title("Проверка клик по логотипу Яндекс")    
-    def test_yandex_logo(self, driver):
-        order_page = OrderPage(driver)
-        order_page.open()
-        
-        result = order_page.check_yandex_logo()
-        assert result, "Логотип Яндекса не ведет на Дзен"
+        # Шаг 1: Начало оформления
+        with allure.step("Нажать кнопку 'Заказать'"):
+            order_page.click_order_button(top=top_button)
+            
+        # Шаг 2: Заполнение контактных данных
+        with allure.step("Заполнить данные пользователя"):
+            order_page.fill_first_page(
+                NAME=OrderTestData.NAME,
+                LAST_NAME=OrderTestData.LAST_NAME,
+                ADRESS=OrderTestData.ADDRESS,
+                METRO_STATION=OrderTestData.METRO_STATION,
+                PHONE=OrderTestData.PHONE
+            )
+            
+        # Шаг 3: Заполнение данных аренды
+        with allure.step("Заполнить данные аренды"):
+            order_page.fill_second_page(
+                date=OrderTestData.DATE,
+                period_index=1,  # Сутки
+                color=color,
+                comment=OrderTestData.COMMENT
+            )
+            
+        # Шаг 4: Подтверждение заказа
+        with allure.step("Подтвердить заказ"):
+            order_page.confirm_order()
+            
+        # Шаг 5: Проверка успешного оформления
+        with allure.step("Проверить сообщение об успехе"):
+            success_text = order_page.get_success_message()
+            assert "Заказ оформлен" in success_text, \
+                f"Не получено подтверждение заказа. Текст: {success_text}"
+                
+            allure.attach(
+                success_text,
+                name="Сообщение об успешном заказе",
+                attachment_type=allure.attachment_type.TEXT
+            )
